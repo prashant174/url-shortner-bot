@@ -1,0 +1,19 @@
+{
+  "name": "slck-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "server": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@slack/bolt": "^3.17.1",
+    "axios": "^1.6.7",
+    "dotenv": "^16.4.5",
+    "nodemon": "^3.0.3"
+  }
+}
