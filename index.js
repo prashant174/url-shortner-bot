@@ -1,23 +1,28 @@
-require('dotenv').config();
-
-const axios=require('axios')
-const {App}=require('@slack/bolt');
-const signingSecret=process.env.SLACK_SIGNING_SECRET
-const botToken=process.env.SLACK_BOT_TOKEN
-
-const app=new App({
-  signingSecret:signingSecret,
-  token:botToken,
+// slackBot.js
+const { App } = require('@slack/bolt');
+const axios = require('axios');
+require('dotenv').config()
+const app = new App({
+  signingSecret: process.env.SLACK_SIGNING_SECRET,
+  token: process.env.SLACK_BOT_TOKEN,
 });
 
+app.message(async ({ message, say }) => {
+  if (message.text && message.text.startsWith('shorten:')) {
+    const longUrl = message.text.substring('shorten:'.length).trim();
 
-(async()=>{
-  await app.start(12000);
+    try {
+      const response = await axios.post('https://checkingone.onrender.com/shorten', { longUrl });
+      const shortUrl = response.data.shortUrl;
 
-  app.message('quote',async({message,say})=>{
-    let resp=await axios.get('https://api.quotable.io/random')
-    const quote=resp.data.content
-    await say(`Hello, <@${message.user}>, ${quote}`)
-  })
-  console.log(`Bolt app is running! port ${process.env.PORT}`);
-})
+      await say(`Shortened URL: ${shortUrl}`);
+    } catch (error) {
+      await say(`Error shortening URL: ${error.message}`);
+    }
+  }
+});
+
+(async () => {
+  await app.start(process.env.PORT || 3000);
+  console.log('Slack bot is running!');
+})();
